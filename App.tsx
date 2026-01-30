@@ -1,22 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import CalendarHeader from './components/CalendarHeader';
 import EventPanel from './components/EventPanel';
-import EmbedModal from './components/EmbedModal';
 import { CURRENT_YEAR, WEEKDAYS, DEFAULT_EVENTS } from './constants';
 import { CalendarEvent, DayInfo } from './types';
 
 const App: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('admin') === 'true') {
-      setIsAdmin(true);
-    }
-  }, []);
 
   const eventsMap = useMemo(() => {
     const map = new Map<string, CalendarEvent>();
@@ -68,7 +58,6 @@ const App: React.FC = () => {
 
   return (
     <div className="w-[850px] h-[600px] bg-[#FAFAF9] flex items-center justify-center overflow-hidden mx-auto">
-      {/* Container: flex-row statt flex-col lg:flex-row stellt sicher, dass die Sidebar NIE nach unten rutscht */}
       <div className="w-[800px] h-[540px] bg-white rounded-[2.5rem] shadow-[0_30px_80px_-20px_rgba(19,90,84,0.12)] border border-[#dddddd] flex flex-row overflow-hidden ring-1 ring-[#135a54]/5">
         
         {/* Kalender-Hauptbereich */}
@@ -131,21 +120,9 @@ const App: React.FC = () => {
               })}
             </div>
           </div>
-
-          {isAdmin && (
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="absolute bottom-6 left-6 p-2.5 bg-white border border-[#dddddd] rounded-xl shadow-sm text-[#135a54] hover:bg-[#135a54] hover:text-white transition-all flex items-center gap-2 group"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-              <span className="text-[9px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Einbetten</span>
-            </button>
-          )}
         </div>
 
-        {/* Sidebar: Immer rechts sichtbar */}
+        {/* Sidebar */}
         <div className="w-[280px] bg-[#d5f2e3] border-l border-[#135a54]/10 flex flex-col p-8 overflow-y-auto shrink-0">
           <div className="flex-1">
             <EventPanel 
@@ -159,8 +136,6 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <EmbedModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };
