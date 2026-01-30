@@ -36,6 +36,7 @@ const App: React.FC = () => {
     const lastDay = new Date(CURRENT_YEAR, currentMonth + 1, 0);
     const today = new Date();
     
+    // Start padding (Monday as first day)
     let startPadding = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
     
     for (let i = startPadding - 1; i >= 0; i--) {
@@ -67,11 +68,11 @@ const App: React.FC = () => {
 
   return (
     <div className="w-[850px] h-[600px] bg-[#FAFAF9] flex items-center justify-center overflow-hidden mx-auto">
-      {/* Container: 800px Breite, 540px Höhe */}
-      <div className="w-[800px] h-[540px] bg-white rounded-[2.5rem] shadow-[0_30px_80px_-20px_rgba(19,90,84,0.12)] border border-[#dddddd] flex flex-col lg:flex-row overflow-hidden ring-1 ring-[#135a54]/5">
+      {/* Container: flex-row statt flex-col lg:flex-row stellt sicher, dass die Sidebar NIE nach unten rutscht */}
+      <div className="w-[800px] h-[540px] bg-white rounded-[2.5rem] shadow-[0_30px_80px_-20px_rgba(19,90,84,0.12)] border border-[#dddddd] flex flex-row overflow-hidden ring-1 ring-[#135a54]/5">
         
         {/* Kalender-Hauptbereich */}
-        <div className="flex-1 flex flex-col p-8 bg-white relative">
+        <div className="flex-1 flex flex-col p-8 bg-white relative min-w-0">
           <CalendarHeader 
             currentMonth={currentMonth} 
             onPrevMonth={() => currentMonth > 0 && setCurrentMonth(m => m - 1)} 
@@ -88,7 +89,7 @@ const App: React.FC = () => {
           <div className="mt-6 flex-1">
             <div className="grid grid-cols-7 mb-2">
               {WEEKDAYS.map(day => (
-                <div key={day} className="text-center text-[9px] font-bold text-[#6f817f] uppercase tracking-[0.3em] py-1">
+                <div key={day} className="text-center text-[9px] font-bold text-[#6f817f] opacity-60 uppercase tracking-[0.3em] py-1">
                   {day}
                 </div>
               ))}
@@ -104,18 +105,17 @@ const App: React.FC = () => {
                     key={idx}
                     onClick={() => setSelectedDate(day.date)}
                     className={`
-                      relative aspect-square flex items-center justify-center transition-all duration-300 calendar-grid-item
+                      relative aspect-square flex items-center justify-center transition-all duration-300
                       ${day.isCurrentMonth ? 'text-[#545454]' : 'text-[#dddddd]'}
                     `}
                   >
-                    {/* Kompakterer innerer Kreis */}
                     <div className={`
                       w-10 h-10 flex flex-col items-center justify-center rounded-full transition-all duration-300
                       ${isSelected ? 'bg-[#135a54] text-white shadow-lg shadow-[#135a54]/20 z-10 font-bold' : 'hover:bg-[#d5f2e3]/60'}
                       ${day.isToday && !isSelected ? 'ring-2 ring-[#9bdbbf] bg-[#d5f2e3]/40 text-[#135a54] font-bold' : ''}
                       ${hasEvent && !isSelected && !day.isToday ? 'bg-[#9bdbbf]/10' : ''}
                     `}>
-                      <span className="text-sm lg:text-base font-semibold tracking-tight">
+                      <span className="text-sm font-semibold tracking-tight">
                         {day.date.getDate()}
                       </span>
                       
@@ -145,8 +145,8 @@ const App: React.FC = () => {
           )}
         </div>
 
-        {/* Sidebar: Breite auf 280px reduziert */}
-        <div className="w-[280px] bg-[#d5f2e3] border-l border-[#135a54]/10 flex flex-col p-8 overflow-y-auto">
+        {/* Sidebar: Immer rechts sichtbar */}
+        <div className="w-[280px] bg-[#d5f2e3] border-l border-[#135a54]/10 flex flex-col p-8 overflow-y-auto shrink-0">
           <div className="flex-1">
             <EventPanel 
               selectedDate={selectedDate} 
@@ -155,7 +155,7 @@ const App: React.FC = () => {
           </div>
           
           <div className="mt-6 pt-6 border-t border-[#135a54]/10 text-center">
-             <span className="text-[9px] font-bold text-[#135a54] uppercase tracking-[0.3em] opacity-50">Fit Reisen Kalender</span>
+             <span className="text-[9px] font-bold text-[#135a54] uppercase tracking-[0.3em] opacity-40">Fit Reisen Kalender</span>
           </div>
         </div>
       </div>
